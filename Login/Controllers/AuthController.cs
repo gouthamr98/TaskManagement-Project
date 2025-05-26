@@ -118,15 +118,18 @@ namespace Login.Controllers
                 userid = int.Parse(useridClaim);
             }
             var user = _db.User.SingleOrDefault(u => u.UserId == userid);
-            if (user == null || user.RefreshToken != tokens.RefreshToken || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
-            {
-                return BadRequest("Invalid refresh token");
-            }
-
+            //if (user == null || user.RefreshToken != tokens.RefreshToken || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
+            //{
+            //    return BadRequest("Invalid refresh token");
+            //}
+            //if (user == null || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
+            //{
+            //    return BadRequest("Invalid refresh token");
+            //}
             var newAccessToken = _jwtHelper.GenerateAccessToken(user);
-            var newRefreshToken = _jwtHelper.GenerateRefreshToken();
+            var newRefreshToken = _jwtHelper.GenerateRefreshToken(user);
 
-            user.RefreshToken = newRefreshToken;
+           // user.RefreshToken = newRefreshToken;
             user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
             _db.SaveChanges();
 

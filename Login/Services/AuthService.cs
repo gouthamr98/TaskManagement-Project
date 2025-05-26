@@ -34,7 +34,7 @@ namespace Login.Services
 
             // Generate tokens
             var accessToken = _jwtHelper.GenerateAccessToken(user);
-            var refreshToken = _jwtHelper.GenerateRefreshToken();
+            var refreshToken = _jwtHelper.GenerateRefreshToken(user);
 
             user.RefreshToken = refreshToken;
             user.RefreshTokenExpiryTime = DateTime.UtcNow.AddMinutes(60);  // Set refresh token expiry time (can be longer)

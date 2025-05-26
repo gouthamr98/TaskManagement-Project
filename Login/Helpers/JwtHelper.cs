@@ -42,10 +42,24 @@ namespace Login.Helpers
 
 
         // Generate Refresh Token (longer expiration)
-        public string GenerateRefreshToken()
+        public string GenerateRefreshToken(Users user)
         {
-            var refreshToken = Guid.NewGuid().ToString();  // Unique value for refresh token
-            return refreshToken;
+            var claims = new List<Claim>
+            {
+             new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
+             new Claim("TokenType", "RefreshToken")
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.SecretKey));
+            var token = new JwtSecurityToken(
+                issuer: _jwtSettings.Issuer,
+                audience: _jwtSettings.Audience,
+                expires: DateTime.UtcNow.AddMinutes(_jwtSettings.RefreshTokenExpiration),
+                claims: claims,
+                signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 
